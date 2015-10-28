@@ -9,8 +9,15 @@ Usage is simple:
 int doc2text(const char *buf, size_t size, char **buffer_out);
 
 Get input buf, size of this buf, result is put in buffer_out.
-Then you should free memory in buffer_out.
+Then you should free buffer_out.
+return: -1 on error(errno is set), 0 on success
+
 There are examples of usage in example directory.
+
+
+Build:(cmake is required)
+cmake .
+make
 
 
 Libdoc is distributed under GNU Public License version 2 or above.
