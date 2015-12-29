@@ -31,8 +31,13 @@ int doc2text(const char *buf, size_t size, char **buffer_out) {
 	int c;
     size_t size_out;
 
-	
-	if (LINE_BUF_SIZE - LONGEST_SEQUENCE <= WRAP_MARGIN) {
+    if (!strlen(buf))
+    {
+        errno = EINVAL;
+        return -1;
+    }
+
+    if (LINE_BUF_SIZE - LONGEST_SEQUENCE <= WRAP_MARGIN) {
         errno = EINVAL;
         return -1;
 	}  
