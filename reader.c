@@ -29,6 +29,7 @@ int copy_out (FILE *f,char *header, FILE *out, get_unicode_char_t get_unicode_ch
     unsigned short int *buffer = NULL;
     unsigned char read_buf[256];
     int buf_is_unicode = 0;
+    char UTFbuffer[4];
 
 	if (get_unicode_char == get_word8_char) {
 		/* non-word file and -u specified. Trying to guess which kind of
@@ -36,9 +37,9 @@ int copy_out (FILE *f,char *header, FILE *out, get_unicode_char_t get_unicode_ch
 		 */
 		if ((unsigned char)header[0]==0xFE && (unsigned char)header[1]==0xFF) {
 			get_unicode_char = get_utf16msb;
-			fputs(convert_char(header[2]<<8|header[3]),out); 
-			fputs(convert_char(header[4]<<8|header[5]),out); 
-			fputs(convert_char(header[6]<<8|header[7]),out); 
+			fputs(convert_char(header[2]<<8|header[3], UTFbuffer),out);
+			fputs(convert_char(header[4]<<8|header[5], UTFbuffer),out);
+			fputs(convert_char(header[6]<<8|header[7], UTFbuffer),out);
 		} else if ((unsigned char)header[0]!=0xFF ||
 				(unsigned char)header[1]!=0xFE) {
 			int c,j,d;
@@ -65,21 +66,21 @@ int copy_out (FILE *f,char *header, FILE *out, get_unicode_char_t get_unicode_ch
 						c=c<<6 | (d & 0x3F);
 					}
 				}
-				fputs (convert_char(c),out);
+				fputs (convert_char(c, UTFbuffer),out);
 			}
 		} else {
 			get_unicode_char = get_utf16lsb;
-			fputs(convert_char(header[3]<<8|header[2]),out); 
-			fputs(convert_char(header[5]<<8|header[4]),out); 
-			fputs(convert_char(header[7]<<8|header[6]),out); 
+			fputs(convert_char(header[3]<<8|header[2], UTFbuffer),out); 
+			fputs(convert_char(header[5]<<8|header[4], UTFbuffer),out); 
+			fputs(convert_char(header[7]<<8|header[6], UTFbuffer),out); 
 		}	    
 		while (!io_funcs->catdoc_eof(f)) {
 			i=get_unicode_char(f,&offset,0x7FFFFFFF, ole_params, read_buf, &buf_is_unicode, io_funcs); 
-            if (i!=EOF) fputs(convert_char(i),out);
+            if (i!=EOF) {printf("%s", convert_char(i, UTFbuffer));fputs(convert_char(i,UTFbuffer),out);}
 		}    
 	} else {
 		for (i=0;i<8;i++) {
-			fputs(convert_char(to_unicode(source_charset,(unsigned char)header[i])),out);
+			fputs(convert_char(to_unicode(source_charset,(unsigned char)header[i]), UTFbuffer),out);
 		}			 
         buffer = (unsigned short int*) malloc(PARAGRAPH_BUFFER * sizeof(unsigned short int));
         if (!buffer) return -1;
@@ -87,8 +88,7 @@ int copy_out (FILE *f,char *header, FILE *out, get_unicode_char_t get_unicode_ch
 		/* Assuming 8-bit input text */
 		while ((count = io_funcs->catdoc_read(buf,1,PARAGRAPH_BUFFER,f, ole_params))) {
 			for (i=0;i<count;i++) {
-				fputs(convert_char(to_unicode(source_charset,
-								(unsigned char)buf[i])),out);
+				fputs(convert_char(to_unicode(source_charset, (unsigned char)buf[i]), UTFbuffer),out);
 			}		       
 		}
         free(buffer);

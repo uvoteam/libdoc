@@ -169,7 +169,7 @@ extern int to_unicode (const short int *charset, int c) ;
 
 extern int from_unicode (CHARSET charset, int u) ;
 
-extern const char* convert_char(int unicode_char);
+extern const char* convert_char(int unicode_char, char UTFbuffer[4]);
 
 extern char* to_utf8(unsigned int uc, char UTFbuffer[4]);
 

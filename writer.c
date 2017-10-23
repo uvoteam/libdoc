@@ -79,9 +79,10 @@ void out_char(const char *chunk, FILE *out, char outputbuffer[LINE_BUF_SIZE], in
 void output_paragraph(unsigned short int *buffer, FILE *out, char outputbuffer[LINE_BUF_SIZE], int *bufpos) {
 	unsigned short int *p;
 	int countout=0;
+    char UTFbuffer[4];
 
 	for (p=buffer;*p;p++) {
-		out_char(convert_char(*p), out, outputbuffer, bufpos);
+		out_char(convert_char(*p, UTFbuffer), out, outputbuffer, bufpos);
 		countout++;
 	}
 }

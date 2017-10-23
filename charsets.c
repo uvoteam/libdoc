@@ -121,9 +121,8 @@ int get_utf8 (FILE *f,long *offset,long fileend, struct ole_params_t *ole_params
 /* 2. target charset is searched for this unicode char, if it wasn't      */
 /*  replaced. If not found, then 3. Substitution map is searched          */
 /**************************************************************************/
-const char *convert_char(int uc) {
+const char *convert_char(int uc, char UTFbuffer[4]) {
 	const char *mapped;
-    char UTFbuffer[4];
 
 	if ((mapped=map_subst(spec_chars,uc))) return mapped;
     /* NULL target charset means UTF-8 output */
