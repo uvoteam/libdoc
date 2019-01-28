@@ -295,7 +295,7 @@ FILE *ole_readdir(FILE *f, struct ole_params_t *ole_params) {
 	e->blocks=NULL;
 	
 	nLen=getshort(oleBuf,0x40);
-	for (i=0 ; i < nLen /2; i++)
+	for (i=0 ; i < nLen/2 && i < OLENAMELENGHT; i++)
 		e->name[i]=(char)oleBuf[i*2];
 	e->name[i]='\0';
 	(ole_params->propCurNumber)++;
