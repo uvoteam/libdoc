@@ -4,6 +4,7 @@
 #include <vector>
 #include <thread>
 #include <iostream>
+#include <assert.h>
 
 #include <errno.h>
 
