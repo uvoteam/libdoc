@@ -23,18 +23,18 @@ void get_text(const string &filename, int i)
     free(buffer);
 }
 
-int main()
+int main(int argc, char *argv[])
 {
     vector<thread> t;
     int i = 0;
 
-
-    t.push_back(thread(bind(get_text, "/home/kasha/Downloads/test.doc", i++)));
-    t.push_back(thread(bind(get_text, "/home/kasha/Downloads/test2.doc", i++)));
-    t.push_back(thread(bind(get_text, "/home/kasha/Downloads/test3.doc", i++)));
-    t.push_back(thread(bind(get_text, "/home/kasha/Downloads/test4.doc", i++)));
-    t.push_back(thread(bind(get_text, "/home/kasha/Downloads/test5.doc", i++)));
-    t.push_back(thread(bind(get_text, "/home/kasha/Downloads/test6.doc", i++)));
+    assert(argc == 7);
+    t.push_back(thread(bind(get_text, argv[1], i++)));
+    t.push_back(thread(bind(get_text, argv[2], i++)));
+    t.push_back(thread(bind(get_text, argv[3], i++)));
+    t.push_back(thread(bind(get_text, argv[4], i++)));
+    t.push_back(thread(bind(get_text, argv[5], i++)));
+    t.push_back(thread(bind(get_text, argv[6], i++)));
 
 
 
