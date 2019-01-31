@@ -88,10 +88,15 @@ FILE* ole_init(FILE *f, void *buffer, size_t bufSize, struct ole_params_t *ole_p
 		return NULL;
 	}
     ole_params->sectorSize = 1<<getshort(oleBuf,0x1e);
+    if (ole_params->sectorSize == 0) {
+        return NULL;
+    }
     sectorSize = ole_params->sectorSize;
     ole_params->shortSectorSize = 1<<getshort(oleBuf,0x20);
 	shortSectorSize= ole_params->shortSectorSize;
-	
+	if (shortSectorSize > sectorSize) {
+        return NULL;
+    }
 /* Read BBD into memory */
 	ole_params->bbdNumBlocks = getulong(oleBuf,0x2c);
     bbdNumBlocks = ole_params->bbdNumBlocks;
