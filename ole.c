@@ -178,11 +178,15 @@ FILE* ole_init(FILE *f, void *buffer, size_t bufSize, struct ole_params_t *ole_p
 					return NULL;
 				}
 			}
+            if (sbdCurrent < 0 || sbdCurrent * 4 >= bbdNumBlocks * sectorSize)
+            {
+                break;
+            }
 			sbdCurrent = getlong(ole_params->BBD, sbdCurrent*4);
 			if(sbdCurrent < 0 ||
 				sbdCurrent >= ole_params->fileLength/sectorSize)
 				break;
-		}
+        }
 		ole_params->sbdNumber = (ole_params->sbdLen*sectorSize)/shortSectorSize;
 	} else {
 		ole_params->SBD=NULL;
