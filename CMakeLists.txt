@@ -22,6 +22,6 @@ add_library(${PROGRAM_NAME} SHARED
   )
 
 set_target_properties(${PROGRAM_NAME} PROPERTIES VERSION ${LIB_VERSION_STRING})
-install(TARGETS ${CONFIG_LIB_NAME}
+install(TARGETS ${PROGRAM_NAME}
         LIBRARY DESTINATION lib COMPONENT libraries)
 install(FILES libdoc.h DESTINATION include)
