@@ -1,7 +1,10 @@
+cmake_minimum_required(VERSION 3.10)
 SET(CMAKE_C_COMPILER /usr/bin/cc)
-SET(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -Wunused-variable -g")
+set(PROGRAM_NAME doc)
+set(LIB_VERSION_STRING 1.0.0)
+SET(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -Wunused-variable -O2")
 
-add_library(doc
+add_library(${PROGRAM_NAME} SHARED
   analyze.c
   catdoc.c
   catdoc.h
@@ -17,3 +20,7 @@ add_library(doc
   substmap.c
   writer.c
   )
+
+set_target_properties(${PROGRAM_NAME} PROPERTIES VERSION ${LIB_VERSION_STRING})
+install(TARGETS ${CONFIG_LIB_NAME}
+        LIBRARY DESTINATION lib COMPONENT libraries)
