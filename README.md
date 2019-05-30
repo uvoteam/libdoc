@@ -1,7 +1,6 @@
 libdoc is the thread-safe library to extract text from microsoft doc files.
 It is based on catdoc sources, but it is does not use any external files like codeset, configs, replacements and so on.
 You don`t need to install catdoc to use this library.
-Lib is not well tested, so use it on your own risk.
 
 Usage is simple:
 #include "libdoc.h"
@@ -19,5 +18,9 @@ Build:(cmake is required)
 cmake .
 make
 
+
+Python usage:
+cd ./python
+./setup install
 
 Libdoc is distributed under GNU Public License version 2 or above.
