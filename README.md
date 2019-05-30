@@ -21,6 +21,8 @@ make
 
 Python usage:
 cd ./python
+
 ./setup install
+
 
 Libdoc is distributed under GNU Public License version 2 or above.
