@@ -3,6 +3,7 @@ It is based on catdoc sources, but it is does not use any external files like co
 You don`t need to install catdoc to use this library.
 
 Usage is simple:
+
 #include "libdoc.h"
 
 int doc2text(const char *buf, size_t size, char **buffer_out);
@@ -15,14 +16,21 @@ There are examples of usage in example directory.
 
 
 Build:(cmake is required)
-cmake .
-make
+
+1. mkdir build
+
+2. cd ./build
+
+3.cmake ..
+
+4.make
 
 
 Python usage:
-cd ./python
 
-./setup install
+1. cd ./python
+
+2. ./setup install
 
 
 Libdoc is distributed under GNU Public License version 2 or above.
