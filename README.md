@@ -1,5 +1,5 @@
 libdoc is the thread-safe library to extract text from microsoft doc files.
-It is based on catdoc sources, but it is does not use any external files like codeset, configs, replacements and so on.
+1;2802;0cIt is based on catdoc sources, but it is does not use any external files like codeset, configs, replacements and so on.
 You don`t need to install catdoc to use this library.
 
 Usage is simple:
@@ -24,6 +24,8 @@ Build:(cmake is required)
 3.cmake ..
 
 4.make
+
+5.make install
 
 
 Python usage:
