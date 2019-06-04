@@ -16,10 +16,7 @@ static PyObject* extract_doc_text(PyObject* self, PyObject *args)
     char *result;
     if (doc2text(doc_buf, len, &result) == -1)
     {
-        char buf[1024];
-        sprintf(buf, "error %lu", len);
-//        PyErr_SetString(PyExc_ValueError, "doc2text failed");
-        PyErr_SetString(PyExc_ValueError, buf);
+        PyErr_SetString(PyExc_ValueError, "doc2text failed");
         return NULL;
     }
     PyObject *ret = Py_BuildValue("s", result);
