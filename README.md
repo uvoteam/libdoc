@@ -11,9 +11,11 @@ int doc2text(const char *buf, size_t size, char **buffer_out);
 Input arguments:
 buf - binary content of .doc document,
 size -  size of the content
+
 Output:
 buffer_out - pointer to extracted .doc text(zero terminated).
 buffer_out is allocated inside doc2text, so you should free buffer_out after usage.
+
 Return:
 -1 on error(errno is set), 0 on success
 
