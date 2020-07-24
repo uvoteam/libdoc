@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 SET(CMAKE_C_COMPILER /usr/bin/cc)
 set(PROGRAM_NAME doc)
-set(LIB_VERSION_STRING 1.0.0)
+set(LIB_VERSION_STRING 1.0.1)
 SET(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -Wunused-variable -O2")
 
 
