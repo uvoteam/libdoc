@@ -4,7 +4,9 @@ set(PROGRAM_NAME doc)
 set(LIB_VERSION_STRING 1.0.0)
 SET(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -Wunused-variable -O2")
 
+
 add_library(${PROGRAM_NAME} SHARED
+  vector.c
   analyze.c
   catdoc.c
   catdoc.h

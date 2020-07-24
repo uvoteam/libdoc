@@ -21,6 +21,7 @@
 #include <errno.h>
 
 #include "catdoc.h"
+#include "vector.h"
 
 #define min(a,b) ((a) < (b) ? (a) : (b))
 
@@ -153,7 +154,7 @@ FILE* ole_init(FILE *f, void *buffer, size_t bufSize, struct ole_params_t *ole_p
 		}
 	}
 	free(tmpBuf);
-	
+
 /* Read SBD into memory */
 	ole_params->sbdLen=0;
 	sbdMaxLen=10;
@@ -161,9 +162,14 @@ FILE* ole_init(FILE *f, void *buffer, size_t bufSize, struct ole_params_t *ole_p
 	if (ole_params->sbdStart > 0) {
 		if((ole_params->SBD=malloc(sectorSize*sbdMaxLen)) == NULL ) {
 			ole_finish(ole_params);
-			return NULL;
+            return NULL;
 		}
-		while(1) {
+        vector items;
+        if (vector_init(&items) == -1 || vector_add(&items, sbdCurrent) == -1) {
+            ole_finish(ole_params);
+            return NULL;
+        }
+        while(1) {
 			fseek(newfile, 512+sbdCurrent*sectorSize, SEEK_SET);
 			fread(ole_params->SBD+ole_params->sbdLen*sectorSize, 1, sectorSize, newfile);
 			ole_params->sbdLen++;
@@ -175,18 +181,23 @@ FILE* ole_init(FILE *f, void *buffer, size_t bufSize, struct ole_params_t *ole_p
 					ole_params->SBD=newSBD;
 				} else {
 					ole_finish(ole_params);
+                    vector_free(&items);
 					return NULL;
 				}
 			}
-            if (sbdCurrent < 0 || sbdCurrent * 4 >= bbdNumBlocks * sectorSize)
-            {
+            if (sbdCurrent < 0 || sbdCurrent * 4 >= bbdNumBlocks * sectorSize) {
                 break;
             }
 			sbdCurrent = getlong(ole_params->BBD, sbdCurrent*4);
-			if(sbdCurrent < 0 ||
-				sbdCurrent >= ole_params->fileLength/sectorSize)
-				break;
+            if(sbdCurrent < 0 || sbdCurrent >= ole_params->fileLength/sectorSize || vector_find(&items, sbdCurrent)) {
+                break;
+            }
+            if (vector_add(&items, sbdCurrent) == -1) {
+                ole_finish(ole_params);
+                return NULL;
+            }
         }
+        vector_free(&items);
 		ole_params->sbdNumber = (ole_params->sbdLen*sectorSize)/shortSectorSize;
 	} else {
 		ole_params->SBD=NULL;
@@ -200,6 +211,12 @@ FILE* ole_init(FILE *f, void *buffer, size_t bufSize, struct ole_params_t *ole_p
 			ole_finish(ole_params);
 			return NULL;
 		}
+
+        vector items;
+        if (vector_init(&items) == -1 || vector_add(&items, propCurrent) == -1) {
+            ole_finish(ole_params);
+            return NULL;
+        }
 		while(1) {
 /*  			fprintf(stderr, "propCurrent=%ld\n",propCurrent); */
 			fseek(newfile, 512+propCurrent*sectorSize, SEEK_SET);
@@ -214,17 +231,21 @@ FILE* ole_init(FILE *f, void *buffer, size_t bufSize, struct ole_params_t *ole_p
 					ole_params->properties=newProp;
 				else {
 					ole_finish(ole_params);
+                    vector_free(&items);
 					return NULL;
 				}
 			}
 			
 			propCurrent = getlong(ole_params->BBD, propCurrent*4);
-			if(propCurrent < 0 ||
-			   propCurrent >= ole_params->fileLength/sectorSize ) {
+			if(propCurrent < 0 ||   propCurrent >= ole_params->fileLength/sectorSize || vector_find(&items, propCurrent)) {
 				break;
 			}
+            if (vector_add(&items, propCurrent) == -1) {
+                ole_finish(ole_params);
+                return NULL;
+            }
 		}
-
+        vector_free(&items);
 		ole_params->propNumber = (ole_params->propLen*sectorSize)/PROP_BLOCK_SIZE;
 		ole_params->propCurNumber = 0;
 	} else {
@@ -323,6 +344,12 @@ FILE *ole_readdir(FILE *f, struct ole_params_t *ole_params) {
 		if((e->blocks=malloc(chainMaxLen*sizeof(long int))) == NULL ) {
 			return NULL;
 		}
+        vector items;
+        if (vector_init(&items) == -1 || vector_add(&items, chainCurrent) == -1) {
+            free(e->blocks);
+            e->blocks = NULL;
+            return NULL;
+        }
 		while(1) {
 /* 			fprintf(stderr, "chainCurrent=%ld\n", chainCurrent); */
 			e->blocks[e->numOfBlocks++] = chainCurrent;
@@ -335,6 +362,7 @@ FILE *ole_readdir(FILE *f, struct ole_params_t *ole_params) {
 				else {
 					free(e->blocks);
 					e->blocks=NULL;
+                    vector_free(&items);
 					return NULL;
 				}
 			}
@@ -345,7 +373,7 @@ FILE *ole_readdir(FILE *f, struct ole_params_t *ole_params) {
 			} else {
 				chainCurrent=-1;
 			}
-			if(chainCurrent <= 0 ||
+			if(chainCurrent <= 0 || vector_find(&items, chainCurrent) ||
 			   chainCurrent >= ( e->isBigBlock ?
 								 ((ole_params->bbdNumBlocks*ole_params->sectorSize)/4)
 								 : ((ole_params->sbdNumber*ole_params->shortSectorSize)/4) ) ||
@@ -354,7 +382,13 @@ FILE *ole_readdir(FILE *f, struct ole_params_t *ole_params) {
 /*   				fprintf(stderr, "chain End=%ld\n", chainCurrent);   */
 				break;
 			}
+            if (vector_add(&items, chainCurrent) == -1) {
+                free(e->blocks);
+                e->blocks=NULL;
+                return NULL;
+            }
 		}
+        vector_free(&items);
 	}
 	
 	if(e->length > (e->isBigBlock ? ole_params->sectorSize : ole_params->shortSectorSize)*e->numOfBlocks)
