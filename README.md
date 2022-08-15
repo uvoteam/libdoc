@@ -1,4 +1,4 @@
-libdoc is the thread-safe library to extract text from microsoft doc files.
+libdoc is a thread-safe library to extract text from microsoft doc files.
 It is based on catdoc sources, but it is does not use any external files like codeset, configs, replacements and so on.
 You don`t need to install catdoc to use this library.
 
