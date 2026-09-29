@@ -39,7 +39,7 @@ Python usage:
 
 1. cd ./python
 
-2. ./setup install
+2. ./setup.py install
 
 
 Libdoc is distributed under GNU Public License version 2 or above.
